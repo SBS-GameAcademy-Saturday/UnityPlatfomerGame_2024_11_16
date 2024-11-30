@@ -39,8 +39,10 @@ public class ParallaxEffect : MonoBehaviour
         startingZ = transform.position.z;
     }
 
-    // Update is called once per frame
-    void LateUpdate()
+    // LateUpdate 혹은 Update에서는 호출주기가 일정하지 않아서 이동 로직을 처리하는 데 
+    // 충돌 처리등 물리연산이 주기적으로 이루어지지 않아 떨림 현상이 발생한다.
+    // 따라서 FixedUpdate를 통해서 일정 주기로 물리 연산(이동, 출동 등)를 진행하여 떨림현상을 방지할 수 있다. 
+    void FixedUpdate()
     {
         // 0 + 5 / (Factor)
         Vector2 newPosition = startingPosition + camMoveSinceStart / parallaxFactor;

@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
             // 내가 이동하는 상태인지 
             if (!IsMoving) return 0;
             // 벽에 닿아있는 상태인지
-            
+            if(_touchingDirections.IsOnWall) return 0;
             // 내가 달리는 상태인지
             if(IsRunning) return runSpeed;
             // 달리고 있지 않다
@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
                     
             // 입력받는 Value가 Vector(0,0)이 아닐시에는 내가 움직이고 있는 상태
             // 입력받는 Value가 Vector(0,0)이 시에는 내가 움직이고 있지 않는 상태
-            animator.SetBool(AnimationStrings.IsMoving, value);
+            _animator.SetBool(AnimationStrings.IsMoving, value);
         }
     }
     
@@ -62,21 +62,21 @@ public class PlayerController : MonoBehaviour
         set
         {
             _isRunning = value;
-            animator.SetBool(AnimationStrings.IsRunning,value);
+            _animator.SetBool(AnimationStrings.IsRunning,value);
         }
     }
     
     
-    private Rigidbody2D rigidbody2D;
-    private Animator animator;
-    
+    private Rigidbody2D _rigidbody2D;
+    private Animator _animator;
+    private TouchingDirections _touchingDirections;
     private Vector2 moveInput = Vector2.zero;
 
     void Start()
     {
-
-        rigidbody2D = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+        _touchingDirections = GetComponent<TouchingDirections>();
     }
 
     private void FixedUpdate()
@@ -85,8 +85,8 @@ public class PlayerController : MonoBehaviour
         // => 어떤 방법이 좋을까?
         // => 프로퍼티
         
-        rigidbody2D.velocity = new Vector2(moveInput.x * CurrentMoveSpeed , rigidbody2D.velocity.y);
-        animator.SetFloat(AnimationStrings.yVelocity, rigidbody2D.velocity.y);
+        _rigidbody2D.velocity = new Vector2(moveInput.x * CurrentMoveSpeed , _rigidbody2D.velocity.y);
+        _animator.SetFloat(AnimationStrings.yVelocity, _rigidbody2D.velocity.y);
     }
     
     public void OnMoveInputAction(InputAction.CallbackContext context)
@@ -152,16 +152,11 @@ public class PlayerController : MonoBehaviour
 
     public void OnJumpInputAction(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.started && _touchingDirections.isGrounded)
         {
-            // 점프를 시켜줄것입니다.
-            Debug.Log("Jump");
-            // AddForce(Up)
-            
             // 위로 올라가는 속력 자체를 제어 => Y축 값을 제어
-            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, jumpImpulse);
-            animator.SetTrigger(AnimationStrings.Jump);
-            
+            _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, jumpImpulse);
+            _animator.SetTrigger(AnimationStrings.Jump);
         }
     }
 }

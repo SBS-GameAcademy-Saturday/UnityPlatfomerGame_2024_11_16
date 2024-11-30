@@ -10,10 +10,13 @@ public static class AnimationStrings
     public static string IsRunningParameterName = "IsRunning";
     public static string JumpParameterName = "Jump";
     public static string yVelocityParameterName = "yVelocity";
+    public static string IsGroundedParameterName = "IsGrounded";
     
     // 해쉬값 통해서 제어 
     public static int IsMoving = Animator.StringToHash(IsMovingParameterName);
     public static int IsRunning = Animator.StringToHash(IsRunningParameterName);
     public static int Jump = Animator.StringToHash(JumpParameterName);
     public static int yVelocity = Animator.StringToHash(yVelocityParameterName);
+    public static int IsGrounded = Animator.StringToHash(IsGroundedParameterName);
+
 }
