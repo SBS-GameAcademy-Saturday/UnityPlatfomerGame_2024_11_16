@@ -30,6 +30,8 @@ public class PlayerController : MonoBehaviour
         {
             // 내가 이동하는 상태인지 
             if (!IsMoving) return 0;
+            // 내가 움직을 수 있는 상태인지
+            if(!CanMove) return 0;
             // 벽에 닿아있는 상태인지
             if(_touchingDirections.IsOnWall) return 0;
             // 내가 달리는 상태인지
@@ -66,6 +68,8 @@ public class PlayerController : MonoBehaviour
         }
     }
     
+    public bool CanMove => _animator.GetBool(AnimationStrings.CanMove);
+
     
     private Rigidbody2D _rigidbody2D;
     private Animator _animator;
@@ -152,11 +156,19 @@ public class PlayerController : MonoBehaviour
 
     public void OnJumpInputAction(InputAction.CallbackContext context)
     {
-        if (context.started && _touchingDirections.isGrounded)
+        if (context.started && _touchingDirections.isGrounded && CanMove)
         {
             // 위로 올라가는 속력 자체를 제어 => Y축 값을 제어
             _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, jumpImpulse);
             _animator.SetTrigger(AnimationStrings.Jump);
+        }
+    }
+
+    public void OnAttackInputAction(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            _animator.SetTrigger(AnimationStrings.Attack);
         }
     }
 }
