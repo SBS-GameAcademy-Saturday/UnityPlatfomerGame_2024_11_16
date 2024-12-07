@@ -69,8 +69,9 @@ public class PlayerController : MonoBehaviour
     }
     
     public bool CanMove => _animator.GetBool(AnimationStrings.CanMove);
+    public bool IsAlive => _animator.GetBool(AnimationStrings.IsAlive);
+    public bool LockVelocity => _animator.GetBool(AnimationStrings.LockVelocity);
 
-    
     private Rigidbody2D _rigidbody2D;
     private Animator _animator;
     private TouchingDirections _touchingDirections;
@@ -85,11 +86,18 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // 차라리 내가 이미 IsRunning에 따라서 계산된 Float 값으로 속력값을 제어하면 되지 않을까?
-        // => 어떤 방법이 좋을까?
-        // => 프로퍼티
-        
-        _rigidbody2D.velocity = new Vector2(moveInput.x * CurrentMoveSpeed , _rigidbody2D.velocity.y);
+        // 살아있지 않은 상태면 종료
+        if (!IsAlive)
+            return;
+
+        // 캐릭터의 Velocity가 변할 수 있을 경우에만 Velocity를 갱신합니다.
+        if(!LockVelocity)
+        {
+            // 차라리 내가 이미 IsRunning에 따라서 계산된 Float 값으로 속력값을 제어하면 되지 않을까?
+            // => 어떤 방법이 좋을까?
+            // => 프로퍼티
+            _rigidbody2D.velocity = new Vector2(moveInput.x * CurrentMoveSpeed, _rigidbody2D.velocity.y);
+        }
         _animator.SetFloat(AnimationStrings.yVelocity, _rigidbody2D.velocity.y);
     }
     
@@ -110,6 +118,9 @@ public class PlayerController : MonoBehaviour
     /// <param name="input"></param>
     public void SetFacingDirection(Vector2 input)
     {
+        // 살아있지 않은 상태면 종료
+        if (!IsAlive)
+            return;
         // x == 0
         if (input.x < 0)
         {
@@ -170,5 +181,14 @@ public class PlayerController : MonoBehaviour
         {
             _animator.SetTrigger(AnimationStrings.Attack);
         }
+    }
+
+    /// <summary>
+    /// KnockBack을 받았을 떄 해당 Vector로 Velocity를 재설정하는 코드
+    /// </summary>
+    /// <param name="knockback"></param>
+    public void OnKnockBack(Vector2 knockback)
+    {
+        _rigidbody2D.velocity = new Vector2(knockback.x, _rigidbody2D.velocity.y + knockback.y);
     }
 }
