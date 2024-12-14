@@ -8,6 +8,9 @@ public class Damagable : MonoBehaviour
     // KnockBack 이벤트
     public UnityEvent<Vector2> _onKnockBack;
 
+    // 체력 변화 이벤트
+    public UnityEvent<int, int> _onHealthChanged;
+
     // 체력 값
     [SerializeField] private int _health = 100;
     // 최대 체력 값
@@ -27,6 +30,9 @@ public class Damagable : MonoBehaviour
             _animator.SetBool(AnimationStrings.IsAlive, value);
         }
     }
+
+    public int Health => _health;
+    public int MaxHealth => _maxHealth;
 
     private Animator _animator;
 
@@ -77,8 +83,13 @@ public class Damagable : MonoBehaviour
             // Hit 트리거 
             _animator.SetTrigger(AnimationStrings.Hit);
 
+            // GUIManager Delegate 호출
+            GUIManager.characterDamaged.Invoke(transform.position, damage);
+
             // knockback 이벤트를 호출한다.
             _onKnockBack.Invoke(knockback);
+            _onHealthChanged.Invoke(_health, _maxHealth);
+
 
             // 체력이 0이하면 죽은 상태로 전환
             if (_health <= 0) IsAlive = false;
@@ -107,6 +118,11 @@ public class Damagable : MonoBehaviour
 
             _health += actualHeal;
 
+            // GUIManager Delegate 호출
+            GUIManager.characterHealed.Invoke(transform.position, actualHeal);
+
+            _onHealthChanged.Invoke(_health, _maxHealth);
+            return true;
             //_health = Mathf.Min(_maxHealth, _health + healthRestore);
         }
         return false;

@@ -25,6 +25,11 @@ public class KnightController : MonoBehaviour
     private bool _hasTarget = false;
 
     /// <summary>
+    /// 멈추는 효과
+    /// </summary>
+    [SerializeField] private float stopRate = 0.6f;
+
+    /// <summary>
     /// 타겟을 가지고 있는지에 대한 프로퍼티
     /// </summary>
     public bool HasTarget
@@ -116,10 +121,15 @@ public class KnightController : MonoBehaviour
             FlipDirection();
         }
 
-        if(CanMove)
-            _rigidbody2D.velocity = new Vector2(moveDirection.x * walkSpeed, _rigidbody2D.velocity.y);
-        else
-            _rigidbody2D.velocity = new Vector2(0, _rigidbody2D.velocity.y);
+        if (!_animator.GetBool(AnimationStrings.LockVelocity))
+        {
+            if (CanMove)
+                _rigidbody2D.velocity = new Vector2(moveDirection.x * walkSpeed, _rigidbody2D.velocity.y);
+            else
+                _rigidbody2D.velocity = 
+                    new Vector2(Mathf.Lerp(_rigidbody2D.velocity.x,0, stopRate), 
+                    _rigidbody2D.velocity.y);
+        }
     }
 
     private void FlipDirection()
@@ -145,5 +155,17 @@ public class KnightController : MonoBehaviour
         {
             FlipDirection();
         }
+    }
+
+    /// <summary>
+    /// Hit 이벤트 발생시 호출할 함수
+    /// </summary>
+    /// <param name="knockback"></param>
+    public void OnHit(Vector2 knockback)
+    {
+        _rigidbody2D.velocity = new Vector2(knockback.x, _rigidbody2D.velocity.y + knockback.y);
+
+        if (knockback.x > 0 && transform.localScale.x > 0) FlipDirection();
+        else if (knockback.x < 0 && transform.localScale.x < 0) FlipDirection();
     }
 }
