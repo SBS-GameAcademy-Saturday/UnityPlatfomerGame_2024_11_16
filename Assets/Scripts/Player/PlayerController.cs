@@ -183,6 +183,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Projectile 공격
+    public void OnProjectileAction(InputAction.CallbackContext context)
+    {
+        // 마우스 우클릭을 누르고 땅에 닿아있다면
+        if (context.started && _touchingDirections.isGrounded)
+        {
+            // 화살 발사하는 애니메이션이 나온다.
+            _animator.SetTrigger(AnimationStrings.ProjectileAttack);
+        }
+    }
+
+
     /// <summary>
     /// KnockBack을 받았을 떄 해당 Vector로 Velocity를 재설정하는 코드
     /// </summary>

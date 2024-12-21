@@ -19,6 +19,7 @@ public static class AnimationStrings
     public static string HitParameterName = "Hit";
     public static string AttackCoolDownParameterName = "AttackCoolDown";
     public static string LockVelocityParameterName = "LockVelocity";
+    public static string ProjectileAttackParameterName = "ProjectileAttack";
 
     // 해쉬값 통해서 제어 
     public static int IsMoving = Animator.StringToHash(IsMovingParameterName);
@@ -34,4 +35,5 @@ public static class AnimationStrings
     public static int Hit = Animator.StringToHash(HitParameterName);
     public static int AttackCoolDown = Animator.StringToHash(AttackCoolDownParameterName);
     public static int LockVelocity = Animator.StringToHash(LockVelocityParameterName);
+    public static int ProjectileAttack = Animator.StringToHash(ProjectileAttackParameterName);
 }
