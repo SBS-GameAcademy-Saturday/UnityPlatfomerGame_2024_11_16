@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 public class GUIManager : MonoBehaviour
 {
@@ -46,7 +47,7 @@ public class GUIManager : MonoBehaviour
 
         // 스크린 좌표를 기준으로 DamageTextPrefab을 생성한다.
         GameObject obj = Instantiate(DamageTextPrefab, spawnPoint, Quaternion.identity, gameCanvas.transform);
-        
+
         TextMeshProUGUI Text = obj.GetComponent<TextMeshProUGUI>();
         Text.text = damage.ToString();
     }
@@ -61,6 +62,27 @@ public class GUIManager : MonoBehaviour
 
         TextMeshProUGUI Text = obj.GetComponent<TextMeshProUGUI>();
         Text.text = heal.ToString();
+    }
+
+    // 게임 종료 버튼 클릭시 처리
+    public void OnExitGame(InputAction.CallbackContext context)
+    {
+        Debug.Log(context.started);
+        // 게임 종료 버튼을 눌렀다.
+        if (context.started)
+        {
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD)
+            Debug.Log(this.name + " : " + this.GetType() + " : " + System.Reflection.MethodBase.GetCurrentMethod().Name);
+#endif
+
+#if UNITY_EDITOR             
+            // 유니티 에디터
+            UnityEditor.EditorApplication.isPlaying = false;
+#elif UNITY_STANDALONE
+            // 모바일, PC에서는 아래의 코드로 게임을 종료
+            Application.Quit();
+#endif
+        }
     }
 
 }

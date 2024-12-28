@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements.Experimental;
 
 public class Projectile : MonoBehaviour
 {
@@ -11,6 +12,12 @@ public class Projectile : MonoBehaviour
     // 넉백 Vector
     public Vector2 knockback = Vector2.zero;
 
+    // 객체의 수명 시간
+    public float lifeTime = 5f;
+
+    // 객체의 타이머
+    private float timer = 0;
+
     Rigidbody2D _rb;
     private void Awake()
     {
@@ -18,14 +25,26 @@ public class Projectile : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
     }
 
-    void Start()
+    public void StartMove()
     {
         // RigidBody의 속력을 설정한다.
         float value = transform.localScale.x > 0 ? 1 : -1;
         _rb.velocity = new Vector2(moveSpeed.x * value, moveSpeed.y);
+    }
 
-        // 5초동안 살아있으면 파괴한다.
-        Destroy(this.gameObject, 5);
+    private void OnEnable()
+    {
+        // 객체가 다시 활성화 되면 timer를 0으로 초기화한다.
+        timer = 0;
+    }
+
+    private void Update()
+    {
+        // 타이머를 돌린다.
+        timer += Time.deltaTime;
+        // 타이머가 lifeTime보다 크면 객체를 끈다
+        if (timer > lifeTime)
+            this.gameObject.SetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -40,7 +59,8 @@ public class Projectile : MonoBehaviour
             bool gothit = damagable.GetHit(attackDamage, deliverdKnockback);
             if (gothit)
             {
-                Destroy(this.gameObject);
+                //Destroy(this.gameObject);
+                this.gameObject.SetActive(false);
             }
         }
     }

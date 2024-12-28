@@ -12,8 +12,15 @@ public class ProjectileLauncher : MonoBehaviour
 
     public void FireProjectile() 
     {
-        // 프리팹 오브젝트를 게임 오브젝트로 생성
-        GameObject projetile = Instantiate(projectilePrefab,launchPoint.position,projectilePrefab.transform.rotation);
+        //// 프리팹 오브젝트를 게임 오브젝트로 생성
+        //GameObject projetile = Instantiate(projectilePrefab,launchPoint.position,projectilePrefab.transform.rotation);
+
+        // PoolingManager에 의해서 관리되고 있는 객체를 반환받는다.
+        GameObject projetile = PoolingManager.Instance.GetPooledObject();
+
+        // 위치 초기화
+        projetile.transform.position = launchPoint.position;
+
         // 생성된 게임 오브젝트의 localScale 값을 가져온다.
         Vector3 originScale = projetile.transform.localScale;
 
@@ -26,6 +33,9 @@ public class ProjectileLauncher : MonoBehaviour
             y = originScale.y * value,
             z = originScale.z,
         };
+
+        // Projectile 객체의 이동을 시작한다.
+        projetile.GetComponent<Projectile>().StartMove();
 
     }
 

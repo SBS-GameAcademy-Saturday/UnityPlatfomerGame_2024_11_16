@@ -22,6 +22,11 @@ public class FlyingEyeController : MonoBehaviour
     [SerializeField] private float stopRate = 0.6f;
 
     /// <summary>
+    /// 죽었을 때 사용할 Collider
+    /// </summary>
+    [SerializeField] private BoxCollider2D _onDeathCollider;
+
+    /// <summary>
     /// 타겟을 가지고 있는지에 대한 여부
     /// </summary>
     private bool _hasTarget = false;
@@ -72,6 +77,8 @@ public class FlyingEyeController : MonoBehaviour
     void Start()
     {
         nextWayPoint = waypoints[waypointIndex];
+        // deathCollider를 꺼준다.
+        _onDeathCollider.enabled = false;
     }
 
     void Update()
@@ -156,4 +163,16 @@ public class FlyingEyeController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 몬스터가 죽었을 때 호출되는 메서드
+    /// </summary>
+    public void OnDeath()
+    {
+        // 중력 값을 2로 변경한다.
+        _rigidbody2.gravityScale = 2f;
+        // 중력에 따라서 떨어질 수 있도록 velocity 값을 변경한다.
+        _rigidbody2.velocity = new Vector2(0, _rigidbody2.velocity.y);
+        // deathCollider를 켜준다.
+        _onDeathCollider.enabled = true;
+    }
 }

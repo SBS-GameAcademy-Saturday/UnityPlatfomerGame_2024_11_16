@@ -11,6 +11,9 @@ public class Damagable : MonoBehaviour
     // 체력 변화 이벤트
     public UnityEvent<int, int> _onHealthChanged;
 
+    // 캐릭터가 죽었을 때 이벤트
+    public UnityEvent _onDeath;  
+
     // 체력 값
     [SerializeField] private int _health = 100;
     // 최대 체력 값
@@ -21,12 +24,14 @@ public class Damagable : MonoBehaviour
     [SerializeField] private bool _isInvincible = false;
     // 무적 시간 
     [SerializeField] private float _invincibleTime = 0.25f;
+
     public bool IsAlive
     {
         get { return _isAlive; }
         set 
         { 
             _isAlive = value;
+            if (!_isAlive) _onDeath.Invoke();
             _animator.SetBool(AnimationStrings.IsAlive, value);
         }
     }
